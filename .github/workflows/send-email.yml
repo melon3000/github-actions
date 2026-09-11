@@ -1,0 +1,34 @@
+name: Send email on push
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  mail_on_push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send mail
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+
+          subject: "Push to ${{ github.repository }}"
+
+          body: |
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            User: ${{ github.event.pusher.name }}
+            Commit SHA: ${{ github.sha }}
+            Commit message: ${{ github.event.head_commit.message }}
+
+          to: milan.petrovski8@gmail.com
+          from: GitHub Actions
